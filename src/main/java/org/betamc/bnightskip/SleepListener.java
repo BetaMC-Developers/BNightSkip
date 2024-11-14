@@ -38,17 +38,17 @@ public class SleepListener implements Listener {
         sleepingPlayers.put(world.getName(), sleepingPlayersInWorld);
 
         Set<Player> playersInWorld = Arrays.stream(Bukkit.getOnlinePlayers()).filter(p -> p.getWorld().equals(world)).collect(Collectors.toSet());
-        int sleepingInWorld = sleepingPlayers.get(world.getName()).size();
-        int curSleepingPercentage = Math.round((float) sleepingInWorld / playersInWorld.size() * 100);
+        int sleeping = sleepingPlayers.get(world.getName()).size();
+        int required = (int) Math.ceil(playersInWorld.size() * ((double) sleepingPercentage / 100));
 
-        if (curSleepingPercentage >= sleepingPercentage) {
-            playersInWorld.forEach(p -> p.sendMessage(String.format("§a%d§7/§a%d %% §7of players are sleeping.", curSleepingPercentage, sleepingPercentage)));
+        if (sleeping >= required) {
+            playersInWorld.forEach(p -> p.sendMessage(String.format("§a%d/%d §7players sleeping", sleeping, required)));
             if (!taskRunning) {
                 taskRunning = true;
                 new SleepTimer(world);
             }
         } else {
-            playersInWorld.forEach(p -> p.sendMessage(String.format("§c%d§7/§c%d %% §7of players are sleeping.", curSleepingPercentage, sleepingPercentage)));
+            playersInWorld.forEach(p -> p.sendMessage(String.format("§c%d/%d §7players sleeping", sleeping, required)));
         }
     }
 
@@ -62,14 +62,12 @@ public class SleepListener implements Listener {
         sleepingPlayers.put(world.getName(), sleepingPlayersInWorld);
 
         Set<Player> playersInWorld = Arrays.stream(Bukkit.getOnlinePlayers()).filter(p -> p.getWorld().equals(world)).collect(Collectors.toSet());
-        int sleepingInWorld = sleepingPlayers.get(world.getName()).size();
-        int curSleepingPercentage = Math.round((float) sleepingInWorld / playersInWorld.size() * 100);
+        int sleeping = sleepingPlayers.get(world.getName()).size();
+        int required = (int) Math.ceil(playersInWorld.size() * ((double) sleepingPercentage / 100));
 
         if (world.getTime() > 10 && world.getTime() < 23450) {
-            playersInWorld.forEach(p ->
-                    p.sendMessage(String.format(curSleepingPercentage >= sleepingPercentage ?
-                            "§a%d§7/§a%d %% §7of players are sleeping." : "§c%d§7/§c%d %% §7of players are sleeping.",
-                            curSleepingPercentage, sleepingPercentage))
+            playersInWorld.forEach(p -> p.sendMessage(String.format(sleeping >= required ?
+                    "§a%d/%d §7players sleeping" : "§c%d/%d §7players sleeping", sleeping, required))
             );
         }
     }
@@ -107,9 +105,9 @@ public class SleepListener implements Listener {
         @Override
         public void run() {
             int playersInWorld = (int) Arrays.stream(Bukkit.getOnlinePlayers()).filter(p -> p.getWorld().equals(task.world)).count();
-            int sleepingInWorld = sleepingPlayers.get(task.world.getName()).size();
-            int curSleepingPercentage = Math.round((float) sleepingInWorld / playersInWorld * 100);
-            if (curSleepingPercentage < sleepingPercentage) {
+            int sleeping = sleepingPlayers.get(task.world.getName()).size();
+            int required = (int) Math.ceil(playersInWorld * ((double) sleepingPercentage / 100));
+            if (sleeping < required) {
                 Bukkit.getScheduler().cancelTask(task.taskId);
                 Bukkit.getScheduler().cancelTask(taskId);
                 taskRunning = false;
