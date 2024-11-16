@@ -23,6 +23,8 @@ public class Config extends Configuration {
         generateOption("sleepingPercentage.value", 25);
         generateOption("sleepingTime.info", "How long (in seconds) the required percentage of players have to sleep before the time changes to day.");
         generateOption("sleepingTime.value", 5);
+        generateOption("clearRain.info", "Should the rain be cleared when time is changed to day?");
+        generateOption("clearRain.value", true);
     }
 
     private void generateOption(String key, Object defaultValue) {
