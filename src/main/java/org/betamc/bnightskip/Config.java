@@ -36,4 +36,37 @@ public class Config extends Configuration {
         this.setProperty(key, value);
     }
 
+    public int getUInt(String path, int def) {
+        Integer o = castInt(this.getProperty(path));
+        if (o == null || o < 0) {
+            this.setProperty(path, def);
+            return def;
+        } else {
+            return o;
+        }
+    }
+
+    /*
+    why does this method NEED to be private bukkit?
+    this code looks like shit but i'm using it anyway
+    since i'm too lazy to code a proper solution
+     */
+    private static Integer castInt(Object o) {
+        if (o == null) {
+            return null;
+        } else if (o instanceof Byte) {
+            return (int) (Byte) o;
+        } else if (o instanceof Integer) {
+            return (Integer) o;
+        } else if (o instanceof Double) {
+            return (int) (double) (Double) o;
+        } else if (o instanceof Float) {
+            return (int) (float) (Float) o;
+        } else if (o instanceof Long) {
+            return (int) (long) (Long) o;
+        } else {
+            return null;
+        }
+    }
+
 }

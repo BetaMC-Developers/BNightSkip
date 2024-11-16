@@ -24,8 +24,12 @@ public class SleepListener implements Listener {
 
     public SleepListener(BNightSkip plugin) {
         this.plugin = plugin;
-        this.sleepingPercentage = plugin.getConfig().getInt("sleepingPercentage.value", 25);
-        this.sleepingTime = plugin.getConfig().getInt("sleepingTime.value", 5) * 20;
+        this.sleepingPercentage = Math.min(plugin.getConfig().getUInt("sleepingPercentage.value", 25), 100);
+        this.sleepingTime = plugin.getConfig().getUInt("sleepingTime.value", 5);
+        plugin.getConfig().load();
+        plugin.getConfig().setProperty("sleepingPercentage.value", sleepingPercentage);
+        plugin.getConfig().setProperty("sleepingTime.value", sleepingTime);
+        plugin.getConfig().save();
     }
 
     @EventHandler
@@ -80,7 +84,7 @@ public class SleepListener implements Listener {
 
         private SleepTimer(World world) {
             this.world = world;
-            taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this, sleepingTime);
+            taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this, sleepingTime * 20L);
             checker = new SleepCheck(this);
         }
 
