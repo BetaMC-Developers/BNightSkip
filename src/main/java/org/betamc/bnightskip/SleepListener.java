@@ -87,6 +87,10 @@ public class SleepListener implements Listener {
         @Override
         public void run() {
             world.setTime(0);
+            if (plugin.getConfig().getBoolean("clearRain.value", true) && world.hasStorm()) {
+                world.setThundering(false);
+                world.setWeatherDuration(5);
+            }
             Bukkit.getScheduler().cancelTask(checker.taskId);
             taskRunning = false;
         }
